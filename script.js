@@ -2,8 +2,11 @@ document.getElementById("arx-form").addEventListener("submit", function(event) {
     event.preventDefault();
 
     const targetArx = parseInt(document.getElementById("target_arx").value);
-    const currentArx = parseInt(document.getElementById("current_arx").value);
+    let currentArx = parseInt(document.getElementById("current_arx").value);
     const currency = document.getElementById("currency").value;
+    if (isNaN(currentArx)) {
+        currentArx = 0;
+    }
 
     const arxNeeded = targetArx - currentArx;
 
@@ -18,11 +21,17 @@ document.getElementById("arx-form").addEventListener("submit", function(event) {
 
     let minCost = Infinity;
     let bestCombination = [];
+    let leftoverArx = 0;
 
     for (let r = 1; r <= 10; r++) {
         combinationsWithReplacement(packs, r).forEach(function(combination) {
             const totalArx = combination.reduce((sum, pack) => sum + pack.arx, 0);
-            const totalCost = combination.reduce((sum, pack) => sum + pack.price[currency], 0);
+            const totalCost = combination.reduce((sum, pack) => {
+                if (pack.price[currency] !== undefined) {
+                    return sum + pack.price[currency];
+                }
+                return sum;
+            }, 0);
 
             if (totalArx >= arxNeeded && totalCost < minCost) {
                 minCost = totalCost;
@@ -31,7 +40,9 @@ document.getElementById("arx-form").addEventListener("submit", function(event) {
         });
     }
 
-    displayResult(bestCombination, minCost, currency);
+    leftoverArx = bestCombination.reduce((sum, pack) => sum + pack.arx, 0) - arxNeeded;
+
+    displayResult(bestCombination, minCost, leftoverArx, currency);
 });
 
 function combinationsWithReplacement(arr, r) {
@@ -46,11 +57,13 @@ function combinationsWithReplacement(arr, r) {
     return combinations;
 }
 
-function displayResult(packs, cost, currency) {
+function displayResult(packs, cost, leftoverArx, currency) {
     const resultDiv = document.getElementById("result");
     resultDiv.innerHTML = `<h2>Total cost: ${currency} ${cost.toFixed(2).toLocaleString()}</h2>`;
     packs.forEach(pack => {
         resultDiv.innerHTML += `<p>Pack: ${pack.arx.toLocaleString()} ARX for ${currency} ${pack.price[currency].toFixed(2).toLocaleString()}</p>`;
     });
+    if (leftoverArx > 0) {
+        resultDiv.innerHTML += `<p>Extra: ${leftoverArx.toLocaleString()} ARX</p>`;
+    }
 }
-
