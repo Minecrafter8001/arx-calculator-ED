@@ -48,8 +48,9 @@ function combinationsWithReplacement(arr, r) {
 
 function displayResult(packs, cost, currency) {
     const resultDiv = document.getElementById("result");
-    resultDiv.innerHTML = `<h2>Total cost: ${currency} ${cost.toFixed(2)}</h2>`;
+    resultDiv.innerHTML = `<h2>Total cost: ${currency} ${cost.toFixed(2).toLocaleString()}</h2>`;
     packs.forEach(pack => {
-        resultDiv.innerHTML += `<p>Pack: ${pack.arx} ARX for ${currency} ${pack.price[currency]}</p>`;
+        resultDiv.innerHTML += `<p>Pack: ${pack.arx.toLocaleString()} ARX for ${currency} ${pack.price[currency].toFixed(2).toLocaleString()}</p>`;
     });
 }
+
