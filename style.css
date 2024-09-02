@@ -6,7 +6,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100vh; /* Full viewport height */
     margin: 0;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -33,6 +33,7 @@ h1 {
 form {
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 label {
@@ -47,6 +48,20 @@ input, select, button {
     transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
     background-color: #555; /* Dark mode background color */
     color: #fff; /* Dark mode text color */
+    width: 100%; /* Full width within the container */
+    max-width: 500px; /* Set a maximum width */
+    box-sizing: border-box; /* Include padding and border in width */
+}
+
+/* Hide up/down buttons in number input fields */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield; /* For Firefox */
 }
 
 input::placeholder {
