@@ -1,18 +1,29 @@
+/* Default styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #333;
+    color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode styles (default) */
+body.dark-mode {
+    background-color: #333;
+    color: #fff;
 }
 
 .container {
-    background-color: white;
+    background-color: #444;
+    color: #fff;
     padding: 20px;
     border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1 {
@@ -32,24 +43,33 @@ input, select, button {
     padding: 10px;
     margin-top: 5px;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid #666;
+    transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    background-color: #555; /* Dark mode background color */
+    color: #fff; /* Dark mode text color */
+}
+
+input::placeholder {
+    color: #ccc;
 }
 
 button {
     margin-top: 20px;
-    background-color: #007bff;
-    color: white;
+    background-color: #0099ff;
+    color: rgb(255, 255, 255);
     cursor: pointer;
     border: none;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #0077cc;
 }
 
-#result {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #e9ecef;
-    border-radius: 5px;
+#version-indicator {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    font-size: 12px;
+    color: #bbb;
 }
