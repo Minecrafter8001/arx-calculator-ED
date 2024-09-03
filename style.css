@@ -89,3 +89,21 @@ button:hover {
     font-size: 12px;
     color: #bbb;
 }
+/* style.css */
+#github {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1000; /* Ensures the icon is on top of other elements */
+}
+
+#github-icon {
+    width: 32px; /* Adjust size as needed */
+    height: 32px; /* Adjust size as needed */
+    border: none;
+    cursor: pointer;
+}
+
+#github-icon:hover {
+    opacity: 0.8; /* Optional: adds a hover effect */
+}
