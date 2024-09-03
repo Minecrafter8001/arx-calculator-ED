@@ -1,30 +1,25 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Apply the saved theme immediately
-    applyDarkMode();
-
-    // Reveal content after the theme has been applied
-    setTimeout(() => {
-        document.body.style.visibility = 'visible';
-    }, 0);
-});
-
-// Function to apply dark mode
-function applyDarkMode() {
-    // Apply dark mode as default
-    document.body.classList.add('dark-mode');
-}
-
-
-
 document.getElementById("arx-form").addEventListener("submit", function(event) {
     event.preventDefault();
 
-    const targetArx = parseInt(document.getElementById("target_arx").value);
-    let currentArx = parseInt(document.getElementById("current_arx").value);
+    const targetArx = parseInt(document.getElementById("target_arx").value, 10);
+    let currentArx = parseInt(document.getElementById("current_arx").value, 10);
     const currency = document.getElementById("currency").value;
 
-    if (isNaN(currentArx)) {
+    const resultDiv = document.getElementById("result");
+    
+    // Clear previous result
+    resultDiv.innerHTML = '';
+    if (!currentArx) {
         currentArx = 0;
+    }
+    if (isNaN(targetArx) || isNaN(currentArx) & !currentArx == 0) {
+        resultDiv.innerHTML = "<p class='error'>Please enter valid numbers for ARX values.</p>";
+        return;
+    }
+
+    if (targetArx <= currentArx) {
+        resultDiv.innerHTML = "<p class='error'>Target ARX should be greater than current ARX.</p>";
+        return;
     }
 
     const arxNeeded = targetArx - currentArx;
@@ -37,6 +32,7 @@ document.getElementById("arx-form").addEventListener("submit", function(event) {
         { arx: 8820, price: { GBP: 4.99, EUR: 5.99, USD: 6.99 } },
         { arx: 5000, price: { GBP: 2.99, EUR: 3.49, USD: 3.99 } }
     ];
+    
 
     let minCost = Infinity;
     let bestCombination = [];
@@ -45,9 +41,7 @@ document.getElementById("arx-form").addEventListener("submit", function(event) {
     for (let r = 1; r <= 10; r++) {
         combinationsWithReplacement(packs, r).forEach(function (combination) {
             const totalArx = combination.reduce((sum, pack) => sum + pack.arx, 0);
-            const totalCost = combination.reduce((sum, pack) => {
-                return sum + (pack.price[currency] || 0);
-            }, 0);
+            const totalCost = combination.reduce((sum, pack) => sum + (pack.price[currency] || 0), 0);
 
             if (totalArx >= arxNeeded && totalCost < minCost) {
                 minCost = totalCost;
@@ -56,9 +50,12 @@ document.getElementById("arx-form").addEventListener("submit", function(event) {
         });
     }
 
-    leftoverArx = bestCombination.reduce((sum, pack) => sum + pack.arx, 0) - arxNeeded;
-
-    displayResult(bestCombination, minCost, leftoverArx, currency);
+    if (bestCombination.length === 0) {
+        displayResult([], Infinity, 0, currency);
+    } else {
+        leftoverArx = bestCombination.reduce((sum, pack) => sum + pack.arx, 0) - arxNeeded;
+        displayResult(bestCombination, minCost, leftoverArx, currency);
+    }
 });
 
 function combinationsWithReplacement(arr, r) {
@@ -74,14 +71,36 @@ function combinationsWithReplacement(arr, r) {
 }
 
 function displayResult(packs, cost, leftoverArx, currency) {
+    const currency_symbols = { GBP: "£", EUR: "€", USD: "$" };
     const resultDiv = document.getElementById("result");
-    const totalArx = packs.reduce((sum, pack) => sum + pack.arx, 0);
+    
+    if (cost === Infinity) {
+        resultDiv.innerHTML = "<p class='error'>Too many ARX needed.</p><p>Target ARX must be under one million.</p>";
+        return;
+    }
 
-    resultDiv.innerHTML = `<h2>Total ARX: ${totalArx.toLocaleString()}</h2>`;
-    resultDiv.innerHTML += `<h2>Total cost: ${currency} ${cost.toFixed(2).toLocaleString()}</h2>`;
+    const totalArx = packs.reduce((sum, pack) => sum + pack.arx, 0);
+    
+    // Group identical packs
+    const packCount = {};
     packs.forEach(pack => {
-        resultDiv.innerHTML += `<p>Pack: ${pack.arx.toLocaleString()} ARX for ${currency} ${pack.price[currency].toFixed(2).toLocaleString()}</p>`;
+        const key = `${pack.arx}-${currency}`;
+        if (packCount[key]) {
+            packCount[key].count += 1;
+        } else {
+            packCount[key] = { pack, count: 1 };
+        }
     });
+
+    // Display results
+    resultDiv.innerHTML = `<h2>Total ARX: ${totalArx.toLocaleString()}</h2>`;
+    resultDiv.innerHTML += `<h2>Total cost: ${currency_symbols[currency]}${cost.toFixed(2).toLocaleString()}</h2>`;
+    
+    for (const key in packCount) {
+        const { pack, count } = packCount[key];
+        resultDiv.innerHTML += `<p>Pack: ${count}x ${pack.arx.toLocaleString()} ARX for ${currency_symbols[currency]}${pack.price[currency].toFixed(2).toLocaleString()}</p>`;
+    }
+    
     if (leftoverArx > 0) {
         resultDiv.innerHTML += `<p>Extra: ${leftoverArx.toLocaleString()} ARX</p>`;
     }
