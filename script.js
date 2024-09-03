@@ -75,7 +75,7 @@ function displayResult(packs, cost, leftoverArx, currency) {
     const resultDiv = document.getElementById("result");
     
     if (cost === Infinity) {
-        resultDiv.innerHTML = "<p class='error'>Too many ARX needed.</p><p>Target ARX must be under one million.</p>";
+        resultDiv.innerHTML = "<p class='error'>Cost error:</p><p>Target ARX must be under one million.</p>";
         return;
     }
 
