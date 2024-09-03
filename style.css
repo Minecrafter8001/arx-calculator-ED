@@ -89,7 +89,7 @@ button:hover {
     font-size: 12px;
     color: #bbb;
 }
-/* style.css */
+
 #github {
     position: fixed;
     bottom: 10px;
@@ -107,3 +107,4 @@ button:hover {
 #github-icon:hover {
     opacity: 0.8; /* Optional: adds a hover effect */
 }
+/* style.css */
